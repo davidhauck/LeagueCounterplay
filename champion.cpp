@@ -1,6 +1,7 @@
 #include "champion.h"
 #include<iostream>
 #include<string>
+#include<stdlib.h>
 using namespace std;
 
 int Champion::SetStats(string args)
@@ -29,4 +30,9 @@ int Champion::SetStats(string args)
 string Champion::getName()
 {
 	return values[NAME_POS];
+}
+
+int Champion::getValue(int pos)
+{
+	return atoi(values[pos].c_str());
 }

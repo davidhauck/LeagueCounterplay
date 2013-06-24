@@ -14,7 +14,7 @@ using namespace std;
 #define TRUE_DMG_POS 6
 #define HEALTH_DMG_POS 7
 #define GAP_CLOSING_POS 8
-#define ESCAPING_POS 9
+#define ESCAPE_POS 9
 #define AOE_DMG_POS 10
 #define INDV_CC_POS 11
 #define AOE_CC_POS 12
@@ -24,6 +24,7 @@ class Champion
 	public:
 		int SetStats(string);
 		string getName();
+		int getValue(int);
 	private:
 		string values[SIZE];
 };

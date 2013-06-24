@@ -7,6 +7,20 @@
 #include "champion.h"
 using namespace std;
 
+struct team_comp
+{
+	short engage;
+	short disengage;
+	short aoe;
+	short indv_cc;
+	short health;
+	short ad;
+	short ap;
+	short burst;
+	short carry;
+};
+
+team_comp checkTeamComp(vector<Champion>);
 void evaluate(vector<Champion>, vector<Champion>);
 void LaunchChampionSelect(map<string, Champion>, vector<string>);
 Champion getPick(map<string, Champion>, vector<string>);
@@ -23,7 +37,7 @@ int main(int argc, char* argv[])
 
 	string fileName = argv[1];
 	string line;
-	ifstream file("Counterplay.csv");
+	ifstream file(fileName.c_str());
 	if (file.is_open())
 	{
 		while (file.good())
@@ -96,19 +110,93 @@ void LaunchChampionSelect(map<string, Champion> champions, vector<string> champi
 		opposingChampions.push_back(getPick(champions, championNames));
 		evaluate(playerChampions, opposingChampions);
 	}
+	else
+	{		
+		cout << "enter their first pick:" << endl;
+		opposingChampions.push_back(getPick(champions, championNames));
+		evaluate(playerChampions, opposingChampions);
+		cout << "Enter your next two picks:" << endl;
+		playerChampions.push_back(getPick(champions, championNames));
+		playerChampions.push_back(getPick(champions, championNames));
+		cout << "Enter their next two picks:" << endl;
+		opposingChampions.push_back(getPick(champions, championNames));
+		opposingChampions.push_back(getPick(champions, championNames));
+		evaluate(playerChampions, opposingChampions);
+		cout << "Enter your next two picks:" << endl;
+		playerChampions.push_back(getPick(champions, championNames));
+		playerChampions.push_back(getPick(champions, championNames));
+		cout << "Enter their next two picks:" << endl;
+		opposingChampions.push_back(getPick(champions, championNames));
+		opposingChampions.push_back(getPick(champions, championNames));
+		evaluate(playerChampions, opposingChampions);
+		cout << "Enter your last pick:" << endl;
+		playerChampions.push_back(getPick(champions, championNames));
+	}
 }
 
 void evaluate(vector<Champion> playerChampions, vector<Champion> opposingChampions)
 {
-	for(int i = 0; i < playerChampions.size(); i++)
+//	for(int i = 0; i < playerChampions.size(); i++)
+//	{
+//		cout << playerChampions[i].getName() << endl;
+//	}
+//	
+//	for(int i = 0; i < opposingChampions.size(); i++)
+//	{
+//		cout << opposingChampions[i].getName() << endl;
+//	}
+	team_comp comp = checkTeamComp(opposingChampions);
+	cout << "Their disengage: " << comp.disengage << endl;
+}
+
+team_comp checkTeamComp(vector<Champion> champions)
+{
+	team_comp comp;
+	for (int j = 1; j < SIZE; j++)
 	{
-		cout << playerChampions[i].getName() << endl;
+		float value = 0;
+		int total = 0;
+		for (int i = 0; i < champions.size(); i++)
+		{
+			total += champions[i].getValue(j);
+		}
+		value = (float)total / champions.size();
+		switch (j)
+		{
+			case ESCAPE_POS:
+				comp.disengage = value;
+				break;
+			case GAP_CLOSING_POS:
+				comp.engage = value;
+				break;
+			case AOE_DMG_POS:
+				comp.aoe += value / 2.0;
+				break;
+			case AOE_CC_POS:
+				comp.aoe += value / 2.0;
+				break;
+			case INDV_CC_POS:
+				comp.indv_cc = value;
+				break;
+			case HEALTH_POS:
+				comp.health = value;
+				break;
+			case AD_POS:
+				comp.ad = value;
+				break;
+			case AP_POS:
+				comp.ap = value;
+				break;
+			case BURST_POS:
+				comp.burst = value;
+				break;
+			case CARRY_POS:
+				comp.carry = value;
+				break;
+			
+		}
 	}
-	
-	for(int i = 0; i < opposingChampions.size(); i++)
-	{
-		cout << opposingChampions[i].getName() << endl;
-	}
+	return comp;
 }
 
 Champion getPick(map<string, Champion> champions, vector<string> championNames)
